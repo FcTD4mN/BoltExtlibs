@@ -1,0 +1,147 @@
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+::                           README.TXT                             ::
+::                                                                  ::
+:: Last Update: 25/07/2018 22:43 GMT+1                              ::
+:: Author(s): Unknown                                                  ::
+:: COPYRIGHT: BOLT 2018                                             ::
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+                          _           _ _   
+                         | |         | | |  
+                         | |__   ___ | | |_ 
+                         | '_ \ / _ \| | __|
+                         | |_) | (_) | | |_ 
+                         |_.__/ \___/|_|\__|
+                               _    _  _  _          
+                    ___ __  __| |_ | |(_)| |__   ___ 
+                   / _ \\ \/ /| __|| || || '_ \ / __|
+                  |  __/ >  < | |_ | || || |_) |\__ \
+                   \___|/_/\_\ \__||_||_||_.__/ |___/
+                        C++ GAME ENGINE TOOLS            
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    Bolt Extlibs Internal Script Utilities Documentation For Windows
+
+    Summary:
+        Reference
+        Hierarchy
+        Building External Libraries
+        Template / Sample
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Reference
+
+
+
+    This batch collection of scripts for software project installation is derived from the one in Bolt repository.
+    Please refer to Bolt/Windows/README.txt Bolt/Windows/_tools/RULES.txt  for more in-depth information.
+
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Hierarchy
+
+
+
+    Legend:
+        [>]:        Collapsed Folder Entry
+        [v]:        Deployed Folder Entry
+        [-]:        File Entry
+        // ...:     Comment
+        /* ... */:  Comment
+
+
+
+[v] BoltExtlibs // Repository Root
+    [v] _build // Build Tools
+        [v] Windows // Build Tools
+            [-] README.txt // User Instructions
+            /* Standalone Batch Files, Allowed for Client Use, here are sample scripts names */
+            [-] buildall.bat
+            ...
+
+            [v] _tools // Internal Tools, Forbidden for Client Use
+                /* General Script Utilities, work as standalone but do-nothing as is */
+                [-] _initextshell.bat // Inits Shell Color and Debugging Utilities, and temporarily add _tools to PATH
+                [-] _initextenv.bat // Inits BOLT Environment variable such as tools paths for ease of use and maintainability
+                [-] _ask.bat // Delegate Script, Prompts the User if he wants to proceed with the execution
+
+                /* Executable Utilities */
+                [-] vswhere.exe // Distributed by Microsoft, allows to find the Visual Studio Install Directory in order to initialise the build environment 
+                // see https://github.com/Microsoft/vswhere
+
+                [-] chgcolor.exe // Distributed by Jim Lawless, allows us to use colors for debugging in the terminal
+                // see http://www.mailsend-online.com/blog/setting-text-color-in-a-batch-file.html
+
+                /* Task Specific Sub-Directories, should work as standalone but should never be called directly */
+                [v] _git // Git Specific Scripted Tasks
+                    [-] _init.bat // Initializes the BOLT git repository and all submodules recursively
+                    [-] _check_status.bat // Checks the status of the repository and prompts the user before continuing if there are unstaged changes
+
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Building External Libraries
+
+
+
+    The build of external libraries is supposed to work standalone, even though it is meant to be called from bolt setup tools.
+    Only x64 Builds are handled. We never supported 32 bits and never will.
+    Builds are separated for each library
+    Some use CMAKE
+    Some don't
+    Some are Header-only
+
+    Each is handled its own way but eventually they are all installed ( built binaries & headers copied ) under _install in Extlibs root.
+    the _install folder is ignored by git so you don't have to worry about committing these kind of changes, your build setup is for your installation only.
+
+
+
+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+:: Template / Sample
+
+
+
+    Here is a typical batch script example, if you need to understand them or to expand the framework with a new utility:
+
+        :::::::::::::::
+        :: ($FILENAME).BAT // UPPERCASE
+        :::::::::::::::
+        @ECHO OFF
+        :::::::::::::::
+        :: Init Shell
+        CALL "%~dp0($RELATIVE_PATH)\_initextshell.bat" // Relative path from script directory to _inithsell.bat directory, starting from %~dp0
+        :::::::::::::::
+        :: HEADER
+        chgcolor %CHEADER%
+        ECHO //////////
+        ECHO %0: START
+        :::::::::::::::
+        :: Init Ext Dev Env Variables
+        CALL _initextenv.bat || goto :error // Found from PATH
+        :::::::::::::::
+
+        :::::::::::::::
+        :: ACTUAL SCRIPT CONTENTS
+        // Here you can rely on Ext Env Variables and Shell Env Variables and _tools general utilities in order to accomplish your task.
+
+        :::::::::::::::
+        :: Reaching End of the Script
+        GOTO :success
+
+        :::::::::::::::
+        :error
+        chgcolor %CERROR%
+        ECHO %0: ERROR
+        ECHO //////////
+        chgcolor %CRESET%
+        EXIT /B 1
+
+        :::::::::::::::
+        :success
+        chgcolor %CSUCCESS%
+        ECHO %0: SUCCESS
+        ECHO //////////
+        chgcolor %CRESET%
+        EXIT /B 0
+
