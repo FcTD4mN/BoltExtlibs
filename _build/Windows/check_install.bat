@@ -37,8 +37,6 @@ call:checkExist "%EXTLIBS_DIR%\_install\include\glm\" || goto :error
 call:checkExist "%EXTLIBS_DIR%\_install\include\SFML\" || goto :error
 call:checkExist "%EXTLIBS_DIR%\_install\include\tinyxml2.h" || goto :error
 
-call:checkExist "%EXTLIBS_DIR%\_install\resources\monaco-editor" || goto :error
-
 call:checkExist "%EXTLIBS_DIR%\_install\debug_x64\lib\glew32s.lib" || goto :error
 call:checkExist "%EXTLIBS_DIR%\_install\debug_x64\lib\sfml-audio-s-d.lib" || goto :error
 call:checkExist "%EXTLIBS_DIR%\_install\debug_x64\lib\sfml-graphics-s-d.lib" || goto :error
